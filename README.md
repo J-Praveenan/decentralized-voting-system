@@ -1,122 +1,146 @@
+# 🗳️ Ethereum Decentralized Voting DApp
 
-# Voting Dapp (Decentralized)
+A **Blockchain-based Voting DApp** built using **Next.js, Solidity, MetaMask, Hardhat, and IPFS (Pinata)**.  
+This project demonstrates a complete Web3 voting system including voter registration, candidate registration, voting, and winner declaration on the Ethereum blockchain.
 
-Build Blockchain Voting Dapp (Decentralized) using Nextjs, Solidity, MetaMask & Hardhat | Voting App
+---
 
+## 🚀 Project Features
 
-Complete the source code of the Ethereum Decentralized Voting project, With the final code & starter file to speed up your development if you are stuck in coding this project.
+- 🧑‍💼 Organizer-controlled voter & candidate authorization  
+- 🗳️ Secure on-chain voting (1 voter = 1 vote)  
+- 🏆 Automatic winner calculation (No votes / Tie / Winner)  
+- 🖼️ IPFS image & metadata storage (Pinata)  
+- 🔐 MetaMask wallet authentication  
+- ⚡ Built with modern Web3 stack (Next.js + Ethers.js)
 
-Complete Web3 Dapp App, Build blockchain voting app, Web3 Project | Blockchain Voting App With Voting Smart Contract Solidity, Complete Project, voting smart contract solidity, solidity projects for beginners, solidity programming tutorial
+---
 
-## Project Overview
+## 🧱 Tech Stack
 
-![alt text](https://www.daulathussain.com/wp-content/uploads/2023/04/voting-dapp.jpg)
+- **Frontend**: Next.js, React, CSS Modules  
+- **Blockchain**: Solidity, Ethereum / Polygon Mumbai / Ganache  
+- **Web3**: Ethers.js, Web3Modal  
+- **Storage**: IPFS (Pinata)  
+- **Wallet**: MetaMask  
+- **Dev Tools**: Hardhat
 
-## Instruction
+---
 
-Kindly follow the following Instructions to run the project in your system and install the necessary requirements
+## 📦 Requirements
 
+### 1️⃣ VS Code
+https://code.visualstudio.com/download  
 
-- [Final Source Code](https://www.theblockchaincoders.com/sourceCode/ethereum-decentralized-voting-project-source-code)
+### 2️⃣ Node.js & NPM
+- Node.js **v18.12.1**  
+- NPM **v8.19.2**  
+https://nodejs.org/en/download  
 
-#### Setup Video
-- [Final Code Setup video](https://youtu.be/WKKJs31jEFQ?si=Vd3MsUOPmeN-H-33)
+### 3️⃣ MetaMask
+https://metamask.io/download/
 
-```https://code.visualstudio.com/download
-  WATCH: Setup & Demo Of Project
+---
+
+## 🔑 External Services
+
+### 📌 Pinata (IPFS)
+Used for storing images & metadata.
+
+Create an account at:  
+https://www.pinata.cloud/
+
+Add your keys to `.env.local`:
+```env
+NEXT_PUBLIC_PINATA_API_KEY=your_api_key
+NEXT_PUBLIC_PINATA_SECRET=your_secret_key
 ```
 
-#### Install Vs Code Editor
+---
 
-```https://code.visualstudio.com/download
-  GET: VsCode Editor
+## 🧪 Blockchain Network
+
+You can use **Ganache (Local)** or **Polygon Mumbai Testnet**.
+
+### Free Test ETH
+https://www.alchemy.com/faucets  
+
+### Polygon Explorer
+https://mumbai.polygonscan.com/
+
+---
+
+## 🛠️ Smart Contract Setup (Hardhat)
+
+### Install Hardhat dependencies
+```bash
+npm install
 ```
 
-#### NodeJs & NPM Version
-
-```https://nodejs.org/en/download
-  NodeJs: v18.12.1
-  NPM: 8.19.2
+### Compile Contracts
+```bash
+npx hardhat compile
 ```
 
-#### Clone Starter File
-
-```https://github.com/daulathussain/Airdrop-Crypto-Starter-File
-  GET: Project Starter File Download
+### Deploy Contract (Ganache)
+```bash
+npx hardhat run scripts/deploy.js --network ganache
 ```
 
-
-All you need to follow the complete project and follow the instructions which are explained in the tutorial by Daulat
-
-## Final Code Instruction
-
-If you download the final source code then you can follow the following instructions to run the Dapp successfully
-
-#### Setup Video
-
-```https://code.visualstudio.com/download
-  WATCH: Setup & Demo Of Project
+After deployment:
+- Copy **Contract Address**
+- Paste them into:
+```js
+context/constants.js
 ```
 
-#### Final Source Code
+---
 
-```https://www.theblockchaincoders.com/SourceCode
-  Download the Final Source Code
+## ▶️ Running the Frontend
+
+### Install dependencies
+```bash
+npm install
 ```
 
-#### Install Vs Code Editor
-
-```https://code.visualstudio.com/download
-  GET: VsCode Editor
+### Install IPFS client
+```bash
+npm install ipfs-http-client
 ```
 
-#### NodeJs & NPM Version
-
-```https://nodejs.org/en/download
-  NodeJs: v18.12.1
-  NPM: 8.19.2
+### Start development server
+```bash
+npm run dev
 ```
 
-#### PInata
-
-```https://www.pinata.cloud/
-  PINATA API KEY
-  PINATA SECRET KEY
+Open in browser:
+```bash
+http://localhost:3000
 ```
 
+---
 
-#### Test Faucets
+## 📂 Project Structure
 
-Alchemy will provide you with some free test faucets which you can transfer to your wallet address for deploying the contract
-
-```https://www.alchemy.com/faucets
-  Get: Free Test Faucets
+```bash
+.
+├── contracts/
+│   └── Voting.sol
+├── scripts/
+│   └── deploy.js
+├── context/
+│   └── Voter.js
+├── pages/
+│   ├── index.js
+│   ├── allowed-voters.js
+│   ├── candidate-registration.js
+│   ├── voterList.js
+│   └── winner.js
+├── components/
+├── assets/
+├── styles/
+├── hardhat.config.js
+└── README.md
 ```
 
-#### RemixID
-
-We are using RemixID for deploying the contract and generation of the ABI in the project, but you can use any other tools like Hardhat, etc.
-
-```https://remix-project.org
-  OPEN: RemixID
-```
-
-#### Polygon Mumbai
-
-```https://mumbai.polygonscan.com/
-  OPEN: Polygon Mumbai
-```
-
-## Important Links
-
-- [Get Pro Blockchain Developer Course](https://www.theblockchaincoders.com/pro-nft-marketplace)
-- [Support Creator](https://bit.ly/Support-Creator)
-- [All Projects Source Code](https://www.theblockchaincoders.com/SourceCode)
-
-
-## Authors
-
-- [@theblockchaincoders.com](https://www.theblockchaincoders.com/)
-- [@consultancy](https://www.theblockchaincoders.com/consultancy)
-- [@youtube](https://www.youtube.com/@daulathussain)
 
