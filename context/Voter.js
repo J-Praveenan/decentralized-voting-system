@@ -19,8 +19,10 @@ export const VotingProvider = ({ children }) => {
   const votingTitle = "My First Smart Contract App";
   const router = useRouter();
   const [votingCandidateId, setVotingCandidateId] = useState(null);
+  const [creatingCandidate, setCreatingCandidate] = useState(false);
 
   const [successMessage, setSuccessMessage] = useState("");
+  const [creatingVoter, setCreatingVoter] = useState(false);
 
   const [currentAccount, setCurrentAccount] = useState("");
   const [candidateLength, setCandidateLength] = useState("");
@@ -124,28 +126,26 @@ export const VotingProvider = ({ children }) => {
   //--------- CREATE VOTER
   const createVoter = async (formInput, fileUrl, router) => {
     try {
+      setCreatingVoter(true);
+      setError("");
+      setSuccessMessage("");
+
       const { name, address, position } = formInput;
-      // console.log(name, address, position, fileUrl);
-      if (!name || !address || !position) return setError("Data is missing");
 
-      // CONNECTING SMART CONTRACT
+      if (!name || !address || !position || !fileUrl) {
+        throw new Error("All fields are required");
+      }
+
       const web3Modal = new Web3Modal();
-      // console.log(web3Modal);
-
       const connection = await web3Modal.connect();
       const provider = new ethers.providers.Web3Provider(connection);
       const signer = provider.getSigner();
       const contract = fetchContract(signer);
-      // console.log(contract);
-
-      // const data = JSON.stringify({name, address, position, image: fileUrl});
-      // const added = await client.add(data);
-      // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
 
       const metadata = {
         name,
         address,
-        position,
+        nic: position,
         image: fileUrl,
       };
 
@@ -160,17 +160,32 @@ export const VotingProvider = ({ children }) => {
         },
       );
 
-      const url = `https://gateway.pinata.cloud/ipfs/${res.data.IpfsHash}`;
-      // console.log("Metadata URL:", url);
+      const ipfsUrl = `https://gateway.pinata.cloud/ipfs/${res.data.IpfsHash}`;
 
-      const voter = await contract.voterRight(address, name, url, fileUrl);
-      await voter.wait();
+      const tx = await contract.voterRight(address, name, ipfsUrl, fileUrl);
+      await tx.wait();
 
-      console.log("Voter created successfully:", voter);
+      // ✅ SUCCESS
+      setSuccessMessage("Voter authorized successfully");
 
+      // 🔄 REFRESH DATA
+      await getAllVoterData();
       router.push("/voterList");
     } catch (error) {
-      setError("Error in creating voter");
+      const message =
+        error?.data?.message ||
+        error?.reason ||
+        error?.message ||
+        "Voter authorization failed";
+
+      setError(
+        message.replace(
+          "VM Exception while processing transaction: revert ",
+          "",
+        ),
+      );
+    } finally {
+      setCreatingVoter(false);
     }
   };
 
@@ -258,32 +273,22 @@ export const VotingProvider = ({ children }) => {
   // ------------- CANDIDATE SECTION --------------------
   const setCandidate = async (candidateForm, fileUrl, router) => {
     try {
-      const { name, address, age } = candidateForm;
-      // console.log(name, address, position, fileUrl);
-      if (!name || !address || !age) return setError("Input Data is missing");
+      setCreatingCandidate(true);
+      setError("");
+      setSuccessMessage("");
 
-      console.log(name, address, age, fileUrl);
+      const { name, address, party } = candidateForm;
+      if (!name || !address || !party || !fileUrl) {
+        throw new Error("All fields are required");
+      }
 
-      // CONNECTING SMART CONTRACT
       const web3Modal = new Web3Modal();
-      // console.log(web3Modal);
-
       const connection = await web3Modal.connect();
       const provider = new ethers.providers.Web3Provider(connection);
       const signer = provider.getSigner();
       const contract = fetchContract(signer);
-      // console.log(contract);
 
-      // const data = JSON.stringify({name, address, position, image: fileUrl});
-      // const added = await client.add(data);
-      // const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-
-      const metadata = {
-        name,
-        address,
-        image: fileUrl,
-        age,
-      };
+      const metadata = { name, address, image: fileUrl, party };
 
       const res = await axios.post(
         "https://api.pinata.cloud/pinning/pinJSONToIPFS",
@@ -297,22 +302,36 @@ export const VotingProvider = ({ children }) => {
       );
 
       const ipfs = `https://gateway.pinata.cloud/ipfs/${res.data.IpfsHash}`;
-      // console.log("Metadata URL:", url);
 
-      const candidate = await contract.setCandidate(
+      const tx = await contract.setCandidate(
         address,
-        age,
+        party,
         name,
         fileUrl,
         ipfs,
       );
-      await candidate.wait();
 
-      console.log(candidate);
+      await tx.wait();
+      setSuccessMessage("Candidate authorized successfully");
+
+      await getNewCandidate();
 
       router.push("/");
     } catch (error) {
-      setError("Error in creating voter");
+      const message =
+        error?.data?.message ||
+        error?.reason ||
+        error?.message ||
+        "Candidate authorization failed";
+
+      setError(
+        message.replace(
+          "VM Exception while processing transaction: revert ",
+          "",
+        ),
+      );
+    } finally {
+      setCreatingCandidate(false);
     }
   };
 
@@ -380,7 +399,7 @@ export const VotingProvider = ({ children }) => {
       return {
         status: "WINNER",
         data: {
-          age: c[0],
+          party: c[0],
           name: c[1],
           id: c[2].toNumber(),
           image: c[3],
@@ -411,6 +430,8 @@ export const VotingProvider = ({ children }) => {
         setCandidate,
         getNewCandidate,
         error,
+        creatingCandidate,
+        creatingVoter,
         setError,
         voterArray,
         voterLength,

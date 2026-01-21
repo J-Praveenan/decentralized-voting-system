@@ -12,10 +12,12 @@ import Input from "../components/Input/Input";
 
 const candidateRegistration = () => {
   const [fileUrl, setFileUrl] = useState(null);
+  const [uploading, setUploading] = useState(false);
+
   const [candidateForm, setCandidateForm] = useState({
     name: "",
     address: "",
-    age: "",
+    party: "",
   });
 
   const router = useRouter();
@@ -24,13 +26,24 @@ const candidateRegistration = () => {
     uploadToIPFSCandidate,
     candidateArray,
     getNewCandidate,
+    creatingCandidate,
   } = useContext(VotingContext);
 
   // ------- VOTERS IMAGE DROP
-  const onDrop = useCallback(async (acceptedFile) => {
-    const url = await uploadToIPFSCandidate(acceptedFile[0]);
-    setFileUrl(url);
-  });
+  const onDrop = useCallback(
+    async (acceptedFile) => {
+      try {
+        setUploading(true);
+        const url = await uploadToIPFSCandidate(acceptedFile[0]);
+        setFileUrl(url);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setUploading(false);
+      }
+    },
+    [uploadToIPFSCandidate],
+  );
 
   //   const onDrop = useCallback((acceptedFiles) => {
   //   if (!acceptedFiles.length) return;
@@ -54,23 +67,6 @@ const candidateRegistration = () => {
   return (
     <div className={Style.createVoter}>
       <div>
-        {fileUrl && (
-          <div className={Style.voterInfo}>
-            <img src={fileUrl} alt="Voter Image" />
-            <div className={Style.voterInfo_paragraph}>
-              <p>
-                Name: <span>&nbps; {candidateForm.name}</span>
-              </p>
-              <p>
-                Add: &nbps; <span>{candidateForm.address.slice(0, 20)}</span>
-              </p>
-              <p>
-                Age: &nbps; <span>{candidateForm.age}</span>
-              </p>
-            </div>
-          </div>
-        )}
-
         {!fileUrl && (
           <div className={Style.sideInfo}>
             <div className={Style.sideInfo_box}>
@@ -89,7 +85,7 @@ const candidateRegistration = () => {
                     <p>
                       Name: {el[1]} #{el[2].toNumber()}
                     </p>
-                    <p>Age: {el[0]}</p>
+                    <p>Party: {el[0]}</p>
                     <p>Address: {el[6].slice(0, 10)}..</p>
                   </div>
                 </div>
@@ -101,23 +97,47 @@ const candidateRegistration = () => {
       <div className={Style.voter}>
         <div className={Style.voter_container}>
           <h1>Create New Candidate</h1>
-          <div className={Style.voter_container_box}>
-            <div className={Style.voter_container_box_div}>
-              <div {...getRootProps()}>
-                <input {...getInputProps()} />
-                <div className={Style.voter_container_box_div_info}>
-                  <p>Upload File: JPG, PNG, GIF, WEBM Max 10MB</p>
-                  <div className={Style.voter_container_box_div_image}>
-                    <Image
-                      src={images.upload}
-                      width={150}
-                      height={150}
-                      objectFit="contain"
-                      alt="File Upload"
-                    />
-                  </div>
-                  <p>Drag & Drop File</p>
-                  <p>or Browse Media on your device</p>
+          <div className={Style.voter_container_box_div}>
+            <div {...getRootProps()}>
+              <input {...getInputProps()} />
+
+              <div className={Style.voter_container_box_div_info}>
+                <p>Upload File: JPG, PNG, GIF, WEBM Max 10MB</p>
+
+                <div className={Style.voter_container_box_div_image}>
+                  {uploading ? (
+                    <>
+                      <Image
+                        src={images.loader}
+                        width={80}
+                        height={80}
+                        alt="Uploading"
+                      />
+                      <p className={Style.uploadText}>Uploading...</p>
+                    </>
+                  ) : fileUrl ? (
+                    <>
+                      <img
+                        src={fileUrl}
+                        alt="Uploaded"
+                        width={120}
+                        height={120}
+                        style={{ borderRadius: "8px", objectFit: "cover" }}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <Image
+                        src={images.upload}
+                        width={150}
+                        height={150}
+                        objectFit="contain"
+                        alt="File Upload"
+                      />
+                      <p>Drag & Drop File</p>
+                      <p>or Browse Media on your device</p>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -145,14 +165,20 @@ const candidateRegistration = () => {
             title="Political Party"
             placeholder="Political Party Name"
             handleClick={(e) =>
-              setCandidateForm({ ...candidateForm, age: e.target.value })
+              setCandidateForm({ ...candidateForm, party: e.target.value })
             }
           />
 
           <div className={Style.Button}>
             <Button
-              btnName="Authorize Candidate"
-              handleClick={() => setCandidate(candidateForm, fileUrl, router)}
+              btnName={
+                creatingCandidate ? "Authorizing..." : "Authorize Candidate"
+              }
+              disabled={creatingCandidate}
+              handleClick={() =>
+                !creatingCandidate &&
+                setCandidate(candidateForm, fileUrl, router)
+              }
             />
           </div>
         </div>
@@ -160,9 +186,13 @@ const candidateRegistration = () => {
 
       <div className={Style.createdVoter}>
         <div className={Style.createdVoter_info}>
-          <Image src={images.SriLankanLogo} alt="user profile" width={360}
-  height={360}
-  objectFit="contain"/>
+          <Image
+            src={images.SriLankanLogo}
+            alt="user profile"
+            width={360}
+            height={360}
+            objectFit="contain"
+          />
           <p>Notice For User</p>
           <p>
             Organizer <span>0x9898372637</span>
