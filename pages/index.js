@@ -93,7 +93,7 @@ const index = () => {
                   Name: {winnerData.candidate[1]} #
                   {winnerData.candidate[2].toNumber()}
                 </p>
-                <p>Age: {winnerData.candidate[0]}</p>
+                <p>Party: {winnerData.candidate[0]}</p>
                 <p>Address: {winnerData.candidate[6].slice(0, 30)}...</p>
               </div>
 
