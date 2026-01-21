@@ -66,11 +66,16 @@ const NavBar = () => {
       )}
 
       <div className={Style.navbar_box}>
-        <di className={Style.tittle}>
+        <div className={Style.tittle}>
           <Link href={{ pathname: "/" }}>
             <Image src={flag} alt="logo" width={130} height={80} />
           </Link>
-        </di>
+        </div>
+
+        {/* ✅ CENTER TITLE */}
+        <div className={Style.centerTitle}>
+          Election Commission of Sri Lanka
+        </div>
 
         <div className={Style.connect} ref={navRef}>
           {currentAccount ? (
