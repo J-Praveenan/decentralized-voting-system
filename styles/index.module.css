@@ -106,7 +106,57 @@
 .winner_card_count{
     font-size: 2rem;
     margin-top: .6rem;
+    color: #fff !important;
 }
+
+.tie_message {
+  text-align: center;
+  font-size: 1rem;
+  color: #5b0f14;
+  font-weight: 600;
+  padding: 1.2rem;
+}
+
+
+/* Result / Tie Card */
+
+.result_card {
+  margin: 3rem auto;
+  max-width: 520px;
+  background: #ffffff;
+  border-top: 6px solid #5b0f14; /* Sri Lanka maroon */
+  border-radius: 6px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  padding: 1.8rem 2rem;
+  text-align: center;
+}
+
+.result_title {
+  color: #5b0f14;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.result_box {
+  background: #fdf6f2;
+  border-radius: 4px;
+  padding: 1.5rem;
+}
+
+.result_status {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #7a1318;
+  margin-bottom: 0.5rem;
+}
+
+.result_message {
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.5;
+}
+
 
 /* MEDIA QUERY*/
 @media screen and (max-width: 35em){

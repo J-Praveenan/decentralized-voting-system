@@ -32,11 +32,15 @@
   border-color: #231e39;
   border-radius: 25px;
   box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.35);
-  color: #b3b8cd;
+  color: #5b0f14; 
   height: 9rem;
   padding: 1rem;
+  width: 14rem;
+  margin-top: 1rem;
 
 }
+
+
 
 .voterInfo_paragraph p{
     line-height: 1rem;

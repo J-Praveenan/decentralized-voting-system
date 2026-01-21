@@ -9,7 +9,8 @@ import Style from "./NavBar.module.css";
 import flag from "../../assets/sri-lanka.gif";
 
 const NavBar = () => {
-  const { connectWallet, error, currentAccount } = useContext(VotingContext);
+  const { connectWallet, error, currentAccount, setError } =
+    useContext(VotingContext);
 
   const [openNav, setOpenNav] = useState(false);
   const navRef = useRef(null);
@@ -38,12 +39,12 @@ const NavBar = () => {
 
   return (
     <div className={Style.navbar}>
-      {error === "" ? (
-        ""
-      ) : (
-        <div className={Style.message_box}>
-          <div className={Style.message}>
+      {error && (
+        <div className={Style.error_overlay}>
+          <div className={Style.error_modal}>
+            <h3>Action Not Allowed</h3>
             <p>{error}</p>
+            <button onClick={() => setError("")}>OK</button>
           </div>
         </div>
       )}
