@@ -66,11 +66,11 @@ const allowedVoters = () => {
           !fileUrl && (
             <div className={Style.sideInfo}>
               <div className={Style.sideInfo_box}>
-                <h4>Create candidate For Voting</h4>
+                <h4>Create Voter For Voting</h4>
                 <p>
                   Blockchain Voting Organization
                 </p>
-                <p className={Style.sideInfo_para}>Contract Candidate</p>
+                <p className={Style.sideInfo_para}>Voter List</p>
               </div>
 
               <div className={Style.card}>
@@ -124,7 +124,7 @@ const allowedVoters = () => {
             handleClick={(e) => 
             setFormInput({...formInput, address: e.target.value})}
           />
-          <Input inputType="text" title="Position" placeholder="Voter Position"
+          <Input inputType="text" title="National Id Number" placeholder="NIC Number"
             handleClick={(e) => 
             setFormInput({...formInput, position: e.target.value})}
           />
@@ -137,7 +137,9 @@ const allowedVoters = () => {
 
       <div className={Style.createdVoter}>
         <div className={Style.createdVoter_info}>
-          <Image src={images.creator} alt="user profile" />
+          <Image src={images.SriLankanLogo} alt="user profile" width={360}
+            height={360}
+            objectFit="contain"/>
           <p>Notice For User</p>
           <p>Organizer <span>0x9898372637</span></p>
           <p>

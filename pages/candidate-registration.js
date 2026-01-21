@@ -142,8 +142,8 @@ const candidateRegistration = () => {
           />
           <Input
             inputType="text"
-            title="Age"
-            placeholder="Candidate Age"
+            title="Political Party"
+            placeholder="Political Party Name"
             handleClick={(e) =>
               setCandidateForm({ ...candidateForm, age: e.target.value })
             }
@@ -160,7 +160,9 @@ const candidateRegistration = () => {
 
       <div className={Style.createdVoter}>
         <div className={Style.createdVoter_info}>
-          <Image src={images.creator} alt="user profile" />
+          <Image src={images.SriLankanLogo} alt="user profile" width={360}
+  height={360}
+  objectFit="contain"/>
           <p>Notice For User</p>
           <p>
             Organizer <span>0x9898372637</span>
