@@ -1,32 +1,46 @@
-import React, {useState, useContext} from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import{ AiFillLock, AiFillUnlock} from "react-icons/ai";
+import { AiFillLock, AiFillUnlock } from "react-icons/ai";
 
 // INTERNAL IMPORT
 import { VotingContext } from "../../context/Voter";
-import Style from './NavBar.module.css'
-import loading from '../../assets/loading.gif';
-
-
+import Style from "./NavBar.module.css";
+import flag from "../../assets/sri-lanka.gif";
 
 const NavBar = () => {
-  const{connectWallet, error, currentAccount} = useContext(VotingContext); 
+  const { connectWallet, error, currentAccount } = useContext(VotingContext);
 
-  const [openNav, setOpenNav] = useState(true);
+  const [openNav, setOpenNav] = useState(false);
+  const navRef = useRef(null);
 
-  const openNavigation = ()=>{
-    if(openNav){
+  const openNavigation = () => {
+    if (openNav) {
       setOpenNav(false);
-    }else if(!openNav){
+    } else if (!openNav) {
       setOpenNav(true);
     }
-  }
-  return(
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (navRef.current && !navRef.current.contains(event.target)) {
+        setOpenNav(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  return (
     <div className={Style.navbar}>
       {error === "" ? (
         ""
-      ):(
+      ) : (
         <div className={Style.message_box}>
           <div className={Style.message}>
             <p>{error}</p>
@@ -36,24 +50,24 @@ const NavBar = () => {
 
       <div className={Style.navbar_box}>
         <di className={Style.tittle}>
-          <Link href={{pathname: '/'}}>
-            <Image src={loading} alt="logo" width={80} height={80}/>
+          <Link href={{ pathname: "/" }}>
+            <Image src={flag} alt="logo" width={130} height={80} />
           </Link>
         </di>
 
-        <div className={Style.connect}>
+        <div className={Style.connect} ref={navRef}>
           {currentAccount ? (
             <div>
               <div className={Style.connect_flex}>
-                <button onClick={()=> openNavigation()}>
+                <button onClick={() => openNavigation()}>
                   {currentAccount.slice(0, 10)}...
                 </button>
                 {currentAccount && (
                   <span>
                     {openNav ? (
-                      <AiFillUnlock onClick={()=> openNavigation()}/>
-                    ):(
-                      <AiFillLock onClick={()=> openNavigation()}/>
+                      <AiFillUnlock onClick={() => openNavigation()} />
+                    ) : (
+                      <AiFillLock onClick={() => openNavigation()} />
                     )}
                   </span>
                 )}
@@ -61,31 +75,34 @@ const NavBar = () => {
               {openNav && (
                 <div className={Style.navigation}>
                   <p>
-                    <Link href={{pathname:"/"}}>Home</Link>
+                    <Link href={{ pathname: "/" }}>Home</Link>
                   </p>
                   <p>
-                    <Link href={{pathname:"candidate-registration"}}>Candidate Registration</Link>
+                    <Link href={{ pathname: "candidate-registration" }}>
+                      Candidate Registration
+                    </Link>
                   </p>
                   <p>
-                    <Link href={{pathname:"allowed-voters"}}>Voter Registration</Link>
+                    <Link href={{ pathname: "allowed-voters" }}>
+                      Voter Registration
+                    </Link>
                   </p>
                   <p>
-                    <Link href={{pathname:"voterList"}}>Voter List</Link>
+                    <Link href={{ pathname: "voterList" }}>Voter List</Link>
                   </p>
                   <p>
                     <Link href={{ pathname: "winner" }}>Winner</Link>
                   </p>
-
                 </div>
               )}
             </div>
-          ):(
-            <button onClick={()=> connectWallet()}>Connect Wallet</button>
+          ) : (
+            <button onClick={() => connectWallet()}>Connect Wallet</button>
           )}
         </div>
       </div>
     </div>
-  )
+  );
 };
 
 export default NavBar;
