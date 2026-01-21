@@ -1,0 +1,15 @@
+.winner {
+  width: 50%;
+  margin: 4rem auto;
+  text-align: center;
+  background: #231e39;
+  padding: 2rem;
+  border-radius: 1rem;
+  color: #fff;
+}
+
+.winner img {
+  width: 200px;
+  border-radius: 1rem;
+  margin-bottom: 1rem;
+}

@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+
+# Next.js
+.next/
+out/
+
+# environment variables
+.env
+.env.local
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Hardhat
+cache/
+artifacts/
+
+# OS files
+.DS_Store
+Thumbs.db
