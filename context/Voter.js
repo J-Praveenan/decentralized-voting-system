@@ -18,12 +18,14 @@ export const VotingContext = React.createContext();
 export const VotingProvider = ({ children }) => {
   const votingTitle = "My First Smart Contract App";
   const router = useRouter();
+  const [votingCandidateId, setVotingCandidateId] = useState(null);
+
+  const [successMessage, setSuccessMessage] = useState("");
 
   const [currentAccount, setCurrentAccount] = useState("");
   const [candidateLength, setCandidateLength] = useState("");
-  const pushCandidate = [];
-  const candidateIndex = [];
-  const [candidateArray, setCandidateArray] = useState(pushCandidate);
+
+  const [candidateArray, setCandidateArray] = useState([]);
 
   //-----END OF THE CANDIDATE DATA
 
@@ -31,8 +33,7 @@ export const VotingProvider = ({ children }) => {
   const highestVote = [];
 
   //----- VOTER SECTION
-  const pushVoter = [];
-  const [voterArray, setVoterArray] = useState(pushVoter);
+  const [voterArray, setVoterArray] = useState([]);
   const [voterLength, setVoterLength] = useState("");
   const [voterAddress, setVoterAddress] = useState([]);
 
@@ -182,21 +183,20 @@ export const VotingProvider = ({ children }) => {
       const signer = provider.getSigner();
       const contract = fetchContract(signer);
 
-      //---VOTER LIST
       const voterListData = await contract.getVoterList();
       setVoterAddress(voterListData);
-      // console.log(voterAddress);
 
-      voterListData.map(async (el) => {
-        const singleVoterData = await contract.getVoterdata(el);
-        pushVoter.push(singleVoterData);
+      const voters = await Promise.all(
+        voterListData.map(async (address) => {
+          return await contract.getVoterdata(address);
+        }),
+      );
 
-        // console.log(singleVoterData);
-      });
+      // ✅ SET STATE ONCE
+      setVoterArray(voters);
 
-      //---VOTER LENGTH
-      const voterList = await contract.getVoterLength();
-      setVoterLength(voterList.toNumber());
+      const voterListLength = await contract.getVoterLength();
+      setVoterLength(voterListLength.toNumber());
     } catch (error) {
       setError("Error while fetching Voter Data");
     }
@@ -210,6 +210,9 @@ export const VotingProvider = ({ children }) => {
   // ---- GIVE VOTE
   const giveVote = async (id) => {
     try {
+      setVotingCandidateId(id.id);
+      setError("");
+      setSuccessMessage("");
       const voterAddress = id.address;
       const voterId = id.id;
 
@@ -220,10 +223,16 @@ export const VotingProvider = ({ children }) => {
       const signer = provider.getSigner();
       const contract = fetchContract(signer);
 
-      // const votedList = await contract.vote(voterAddress, voterId);
-      const votedList = await contract.vote(voterAddress, voterId);
-      await votedList.wait(); // ✅ REQUIRED
-      console.log(votedList);
+      const tx = await contract.vote(voterAddress, voterId);
+
+      await tx.wait(); // ⏳ wait for blockchain confirmation
+
+      // ✅ SUCCESS
+      setSuccessMessage("Your vote has been successfully recorded.");
+
+      // 🔄 REFRESH DATA (NO PAGE RELOAD)
+      await getNewCandidate();
+      await getAllVoterData();
     } catch (error) {
       console.error(error);
 
@@ -240,6 +249,9 @@ export const VotingProvider = ({ children }) => {
           "",
         ),
       );
+    } finally {
+      // ✅ ALWAYS stop processing (success OR error)
+      setVotingCandidateId(null);
     }
   };
 
@@ -307,29 +319,27 @@ export const VotingProvider = ({ children }) => {
   //-- GET CANDIDATE DATA
   const getNewCandidate = async () => {
     try {
-      //CONNECTING SMART CONTRACT
       const web3Modal = new Web3Modal();
       const connection = await web3Modal.connect();
       const provider = new ethers.providers.Web3Provider(connection);
       const signer = provider.getSigner();
       const contract = fetchContract(signer);
 
-      //---ALL CANDIDATE
       const allCandidate = await contract.getCandidate();
-      // console.log(allCandidate);
 
-      allCandidate.map(async (el) => {
-        const singleCandidateData = await contract.getCandidatedata(el);
-        pushCandidate.push(singleCandidateData);
-        candidateIndex.push(singleCandidateData[2].toNumber());
-        // console.log(singleCandidateData);
-      });
+      const candidates = await Promise.all(
+        allCandidate.map(async (el) => {
+          return await contract.getCandidatedata(el);
+        }),
+      );
 
-      //--- CANDIDATE LENGTH
+      // ✅ SET STATE ONCE (no duplicates)
+      setCandidateArray(candidates);
+
       const allCandidateLength = await contract.getCandidateLength();
       setCandidateLength(allCandidateLength.toNumber());
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -342,29 +352,43 @@ export const VotingProvider = ({ children }) => {
 
       const addresses = await contract.getCandidate();
 
-      let winner = null;
-      let maxVotes = -1;
+      const candidates = await Promise.all(
+        addresses.map(async (addr) => {
+          return await contract.getCandidatedata(addr);
+        }),
+      );
 
-      for (let i = 0; i < addresses.length; i++) {
-        const data = await contract.getCandidatedata(addresses[i]);
+      const voteCounts = candidates.map((c) => c[4].toNumber());
+      const maxVotes = Math.max(...voteCounts);
 
-        const voteCount = data[4].toNumber();
-
-        if (voteCount > maxVotes) {
-          maxVotes = voteCount;
-          winner = {
-            age: data[0],
-            name: data[1],
-            id: data[2].toNumber(),
-            image: data[3],
-            votes: voteCount,
-            ipfs: data[5],
-            address: data[6],
-          };
-        }
+      // ❌ No votes at all
+      if (maxVotes === 0) {
+        return { status: "NO_VOTES" };
       }
 
-      return winner;
+      const topCandidates = candidates.filter(
+        (c) => c[4].toNumber() === maxVotes,
+      );
+
+      // 🤝 Tie
+      if (topCandidates.length > 1) {
+        return { status: "TIE", votes: maxVotes };
+      }
+
+      // 🏆 Winner
+      const c = topCandidates[0];
+      return {
+        status: "WINNER",
+        data: {
+          age: c[0],
+          name: c[1],
+          id: c[2].toNumber(),
+          image: c[3],
+          votes: maxVotes,
+          ipfs: c[5],
+          address: c[6],
+        },
+      };
     } catch (error) {
       console.error("Error fetching winner:", error);
     }
@@ -393,6 +417,9 @@ export const VotingProvider = ({ children }) => {
         voterAddress,
         currentAccount,
         candidateLength,
+        votingCandidateId,
+        successMessage,
+        setSuccessMessage,
         candidateArray,
         uploadToIPFSCandidate,
         getWinner,
