@@ -14,7 +14,7 @@
   width: 15rem;
   height: 15rem;
   padding: 1rem;
-  background-color: #231e39;
+  background-color: #5b0f14; 
   border-radius:25px;
   box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.35);
   color: #b3b8cd;
@@ -32,11 +32,15 @@
   border-color: #231e39;
   border-radius: 25px;
   box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.35);
-  color: #b3b8cd;
+  color: #5b0f14; 
   height: 9rem;
   padding: 1rem;
+  width: 14rem;
+  margin-top: 1rem;
 
 }
+
+
 
 .voterInfo_paragraph p{
     line-height: 1rem;
@@ -49,33 +53,43 @@
 /* SIDEINFO  */
 
 .sideInfo{
-    background-color: #231E39;
+    background-color: #5b0f14; 
     padding: 0.5rem 1rem;
     border-radius: 1rem;
-    color:#b3b8cd;
+    color:#5b0f14; 
+}
+
+.sideInfo_box p{
+    
+    color:#fff; 
 }
 
 .sideInfo_box h4{
-    background-color: #9a02ac;
+    background-color: #fff;
     padding: 0.5rem;
     border-radius: 0.2rem;
 }
 
 .sideInfo_para{
-    background-color: #9a02ac;
+    background-color: #fff;
     padding: 0.5rem;
     border-radius: .2rem;
+    color: #5b0f14 !important;
+
 }
+
+
 
 .card{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
+    color: #fff;
 }
 
 .card_box{
     line-height: 1;
-    border: 1px solid #9a02ac;
+    border: 1px solid #fff; 
     padding: 0.2rem;
     border-radius: 0.3rem;
 
@@ -89,23 +103,23 @@
 /*-----USER LIST ------*/
 
 .createdVoter_info{
-    background-color: #231e39;
+    background-color: #5b0f14; 
     border-radius: 25px;
-    color: #b3b8cd;
+    color: #fff;
     padding: 2rem;
 }
 
 .voter {
-  background-color: #231e39;
+  background-color: #5b0f14; 
   border-radius: 25px;
   box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.35);
-  color: #b3b8cd;
+  color: #fff;
   padding: 2rem;
 }
 
 .voter__container__box {
   text-align: center;
-  border: 1px dotted #9a02ac;
+  border: 1px dotted #fff;
   border-radius: 5px;
 }
 

@@ -1,42 +1,51 @@
-import React from "react";
+import React, { useContext } from "react";
 import Image from "next/image";
 import { useEffect } from "react";
 //INTERNAL IMPORT
 // import Style from '../card/card';
-import Style from './card.module.css'
+import Style from "./card.module.css";
+import { VotingContext } from "../../context/Voter";
 
-import images from '../../assets'
+import images from "../../assets";
 
-
-
-const card = ({candidateArray, giveVote}) => {
+const card = ({ candidateArray, giveVote }) => {
+  const { votingCandidateId } = useContext(VotingContext);
 
   return (
     <div className={Style.card}>
-      {candidateArray.map((el, i)=>(
+      {candidateArray.map((el, i) => (
         <div className={Style.card_box}>
           <div className={Style.image}>
-            <img src={el[3]} alt="profile"/>
+            <img src={el[3]} alt="profile" />
           </div>
           <div className={Style.card_info}>
             <h2>
               {el[1]} # {el[2].toNumber()}
             </h2>
             <p>{el[0]}</p>
-            <p>Address: {el[6].slice(0,30)}...</p>
+            <p>Address: {el[6].slice(0, 30)}...</p>
             <p className={Style.total}>Total Vote</p>
           </div>
           <div className={Style.card_vote}>
             <p>{el[4].toNumber()}</p>
           </div>
           <div className={Style.card_button}>
-            <button onClick={() => giveVote({id: el[2].toNumber(), address: el[6]})}>Give Vote</button>
+            <button
+              onClick={() => giveVote({ id: el[2].toNumber(), address: el[6] })}
+              disabled={votingCandidateId === el[2].toNumber()}
+              className={
+                votingCandidateId === el[2].toNumber() ? Style.loading_btn : ""
+              }
+            >
+              {votingCandidateId === el[2].toNumber()
+                ? "Processing..."
+                : "Give Vote"}
+            </button>
           </div>
         </div>
-      ))
-      }
+      ))}
     </div>
-  )
+  );
 };
 
 export default card;

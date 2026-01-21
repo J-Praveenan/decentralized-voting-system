@@ -1,6 +1,6 @@
 .input__box {
   width: 100%;
-  background-color: #730283;
+  background-color: #fff;
   padding: 0.5rem;
   border-radius: 0.2rem;
 }
@@ -11,11 +11,11 @@
   width: 100%;
   outline: none;
   padding-inline: 0.5rem;
-  color: #fff;
+  color: #5b0f14; 
 }
 
 .input__box input::placeholder {
-  color:#2d0036;
+  color:#8f8d8d;
   font-weight: 500;
   text-transform: capitalize;
 }
